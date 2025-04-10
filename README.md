@@ -1,4 +1,4 @@
-# azure_ai
+# README
 
 Azure AI Examples - What I really learned in Microsoft AI-102.
 
