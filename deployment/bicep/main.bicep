@@ -21,9 +21,11 @@ param environmentName string = 'dev'
 @description('The object ID of the current user/service principal for Key Vault access')
 param currentUserObjectId string
 
-// Variables
-var resourceGroupName = '${baseName}-${environmentName}-rg'
-var uniqueSuffix = substring(uniqueString(subscription().id, baseName, environmentName), 0, 6)
+// Generate a consistent unique identifier
+var uniqueSuffix = substring(uniqueString(subscription().id, baseName, environmentName, deployment().name), 0, 6)
+
+// Resource Group Name
+var resourceGroupName = '${baseName}-${environmentName}-${uniqueSuffix}-rg'
 
 // Create Resource Group directly
 resource rg 'Microsoft.Resources/resourceGroups@2022-09-01' = {
@@ -58,7 +60,7 @@ module aiServices 'modules/ai-services.bicep' = {
   name: 'aiServicesDeployment'
   scope: rg
   params: {
-    name: '${baseName}-${environmentName}-ai'
+    name: '${baseName}-${environmentName}-ai-${uniqueSuffix}'
     location: location
     keyVaultName: keyVault.outputs.keyVaultName
     storageAccountName: storageAccount.outputs.storageAccountName
@@ -71,4 +73,3 @@ output keyVaultName string = keyVault.outputs.keyVaultName
 output keyVaultUri string = keyVault.outputs.keyVaultUri
 output storageAccountName string = storageAccount.outputs.storageAccountName
 output aiServicesName string = aiServices.outputs.aiServicesName
-

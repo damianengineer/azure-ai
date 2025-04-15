@@ -12,9 +12,12 @@ param keyVaultName string
 @description('Enable hierarchical namespace for Data Lake Storage Gen2')
 param enableHierarchicalNamespace bool = false
 
+// Validate storage account name (Azure has strict naming rules)
+var sanitizedName = toLower(replace(name, '-', ''))
+
 // Create Storage Account
 resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
-  name: name
+  name: sanitizedName
   location: location
   kind: 'StorageV2'
   sku: {

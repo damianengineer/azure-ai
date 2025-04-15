@@ -2,24 +2,42 @@
 """
 Azure AI Sentiment Analysis Example
 ----------------------------------
-This script shows how to:
-1. Authenticate to Azure Key Vault using DefaultAzureCredential
-2. Retrieve AI service credentials from Key Vault
-3. Use the Text Analytics API to perform sentiment analysis
+This script dynamically retrieves Azure resource credentials
+and performs sentiment analysis using Azure AI Text Analytics
 """
 
 import os
+import json
 import sys
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
 from azure.ai.textanalytics import TextAnalyticsClient
 from azure.core.credentials import AzureKeyCredential
 
-# Output resource names from Bicep deployment
-KEY_VAULT_NAME = "aiproject-dev-kv-7dtojm"  # Replace with your Key Vault name from deployment output
-AI_SERVICE_NAME = "aiproject-dev-ai"       # Replace with your AI service name from deployment output
+def load_deployment_config():
+    """
+    Load deployment configuration from JSON file or environment variables
+    """
+    try:
+        # Try loading from file first
+        with open('deployment_config.json', 'r') as config_file:
+            return json.load(config_file)
+    except FileNotFoundError:
+        # Fallback to environment variables
+        config = {
+            'KEY_VAULT_NAME': os.environ.get('KEY_VAULT_NAME', ''),
+            'AI_SERVICES_NAME': os.environ.get('AI_SERVICES_NAME', '')
+        }
+        
+        # Validate configuration
+        if not config['KEY_VAULT_NAME'] or not config['AI_SERVICES_NAME']:
+            print("❌ Unable to find deployment configuration")
+            print("Please ensure deployment_config.json exists or environment variables are set")
+            sys.exit(1)
+        
+        return config
 
-def get_credentials_from_keyvault():
+def get_credentials_from_keyvault(config):
     """
     Retrieves AI service credentials from Azure Key Vault using DefaultAzureCredential
     """
@@ -28,14 +46,18 @@ def get_credentials_from_keyvault():
         credential = DefaultAzureCredential()
         
         # Create a secret client to access the Key Vault
-        key_vault_uri = f"https://{KEY_VAULT_NAME}.vault.azure.net/"
+        key_vault_uri = f"https://{config['KEY_VAULT_NAME']}.vault.azure.net/"
         secret_client = SecretClient(vault_url=key_vault_uri, credential=credential)
         
         # Retrieve the AI service key and endpoint from Key Vault
-        ai_key = secret_client.get_secret(f"{AI_SERVICE_NAME}-key").value
-        ai_endpoint = secret_client.get_secret(f"{AI_SERVICE_NAME}-endpoint").value
+        ai_key = secret_client.get_secret(f"{config['AI_SERVICES_NAME']}-key").value
+        ai_endpoint = secret_client.get_secret(f"{config['AI_SERVICES_NAME']}-endpoint").value
         
         print(f"✅ Successfully retrieved credentials from Key Vault")
+        print(f"   Vault: {config['KEY_VAULT_NAME']}")
+        print(f"   AI Service: {config['AI_SERVICES_NAME']}")
+        print(f"   Endpoint: {ai_endpoint}")  # Add this line to print the endpoint
+        
         return ai_key, ai_endpoint
     except Exception as e:
         print(f"❌ Error retrieving credentials from Key Vault: {str(e)}")
@@ -46,6 +68,11 @@ def analyze_sentiment(key, endpoint, text):
     Performs sentiment analysis on the provided text using Azure AI Text Analytics
     """
     try:
+        # Diagnostic print of key and endpoint
+        print(f"🔍 Diagnostic Info:")
+        print(f"   Key Length: {len(key)}")
+        print(f"   Endpoint: {endpoint}")
+
         # Create a client for Text Analytics with the retrieved credentials
         text_analytics_client = TextAnalyticsClient(
             endpoint=endpoint,
@@ -70,11 +97,20 @@ def analyze_sentiment(key, endpoint, text):
                 
     except Exception as e:
         print(f"❌ Error analyzing sentiment: {str(e)}")
+        # Print full traceback for more detailed error information
+        import traceback
+        traceback.print_exc()
         sys.exit(1)
 
 def main():
-    print("🔑 Retrieving credentials from Azure Key Vault...")
-    key, endpoint = get_credentials_from_keyvault()
+    """
+    Main execution function for sentiment analysis
+    """
+    print("🔑 Loading deployment configuration...")
+    config = load_deployment_config()
+    
+    print("🔐 Retrieving credentials from Azure Key Vault...")
+    key, endpoint = get_credentials_from_keyvault(config)
     
     print("\n📊 Performing sentiment analysis...")
     text_to_analyze = "Just say NO to click-ops deployments"

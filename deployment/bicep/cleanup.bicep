@@ -8,9 +8,31 @@ targetScope = 'subscription'
 @description('The name of the resource group to remove')
 param resourceGroupName string
 
-// No resources to deploy - the only operation is to remove the resource group
+// Optional: Add a confirmation parameter to prevent accidental deletion
+@description('Confirm resource group deletion')
+@allowed([
+  'yes',
+  'no'
+])
+param confirmDeletion string = 'no'
+
+// Resource group deletion
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2022-09-01' existing = {
   name: resourceGroupName
+}
+
+// Conditional deletion
+resource resourceGroupDeletion 'Microsoft.Resources/deployments@2022-09-01' = if (confirmDeletion == 'yes') {
+  name: 'resourceGroupDeletion'
+  location: resourceGroup.location
+  properties: {
+    mode: 'Complete'
+    template: {
+      '$schema': 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+      contentVersion: '1.0.0.0',
+      resources: []
+    }
+  }
 }
 
 // Output to confirm deletion is in progress

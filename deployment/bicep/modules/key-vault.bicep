@@ -10,6 +10,10 @@ param location string
 param currentUserObjectId string
 
 @description('The SKU name of the Key Vault')
+@allowed([
+  'standard'
+  'premium'
+])
 param skuName string = 'standard'
 
 // Create Key Vault
@@ -36,15 +40,9 @@ resource keyVault 'Microsoft.KeyVault/vaults@2022-07-01' = {
         objectId: currentUserObjectId
         tenantId: subscription().tenantId
         permissions: {
-          keys: [
-            'all'
-          ]
-          secrets: [
-            'all'
-          ]
-          certificates: [
-            'all'
-          ]
+          keys: [ 'all' ]
+          secrets: [ 'all' ]
+          certificates: [ 'all' ]
         }
       }
     ]

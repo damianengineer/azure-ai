@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# This script deploys the Bicep template to Azure
-# Prerequisites: Azure CLI must be installed and you must be logged in
-
 # Get the current user's Object ID for Key Vault access policies
 CURRENT_USER_OBJECT_ID=$(az ad signed-in-user show --query id -o tsv)
 echo "Current user Object ID: $CURRENT_USER_OBJECT_ID"
@@ -32,15 +29,36 @@ ls -la modules/
 
 # Deploy the Bicep template
 echo "Deploying Azure resources..."
-az deployment sub create \
+deployment_output=$(az deployment sub create \
   --name "AIProjectDeployment-$(date +%Y%m%d%H%M%S)" \
   --location eastus \
   --template-file main.bicep \
-  --parameters @main.parameters.temp.json
+  --parameters @main.parameters.temp.json \
+  --output json)
 
 # Check deployment status
 if [ $? -eq 0 ]; then
   echo "Deployment completed successfully!"
+  
+  # Extract outputs
+  RESOURCE_GROUP_NAME=$(echo "$deployment_output" | jq -r '.properties.outputs.resourceGroupName.value')
+  KEY_VAULT_NAME=$(echo "$deployment_output" | jq -r '.properties.outputs.keyVaultName.value')
+  AI_SERVICES_NAME=$(echo "$deployment_output" | jq -r '.properties.outputs.aiServicesName.value')
+  STORAGE_ACCOUNT_NAME=$(echo "$deployment_output" | jq -r '.properties.outputs.storageAccountName.value')
+
+  # Create a configuration file for the Python script
+  cat > deployment_config.json << EOF
+{
+  "RESOURCE_GROUP_NAME": "$RESOURCE_GROUP_NAME",
+  "KEY_VAULT_NAME": "$KEY_VAULT_NAME",
+  "AI_SERVICES_NAME": "$AI_SERVICES_NAME",
+  "STORAGE_ACCOUNT_NAME": "$STORAGE_ACCOUNT_NAME"
+}
+EOF
+
+  # Display deployment outputs
+  echo "Deployment Outputs:"
+  echo "$deployment_output" | jq '.properties.outputs'
 else
   echo "Deployment failed!"
   exit 1
@@ -48,14 +66,3 @@ fi
 
 # Clean up temporary file
 rm main.parameters.temp.json
-
-# Display deployment outputs
-echo "Deployment outputs:"
-LATEST_DEPLOYMENT=$(az deployment sub list --query "[0].name" -o tsv)
-if [ ! -z "$LATEST_DEPLOYMENT" ]; then
-  az deployment sub show \
-    --name "$LATEST_DEPLOYMENT" \
-    --query "properties.outputs" -o json
-else
-  echo "No deployment found to display outputs."
-fi
