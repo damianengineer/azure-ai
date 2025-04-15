@@ -1,0 +1,117 @@
+# Azure AI Infrastructure as Code (Bicep)
+
+This repository contains Bicep templates for deploying the core infrastructure required for Azure AI services with security best practices in mind.
+
+## Resources Deployed
+
+This Bicep template deploys the following resources:
+
+1. **Resource Group** - Container for all resources
+2. **Key Vault** - For securely storing credentials and secrets
+3. **Storage Account** - With a container for AI training data
+4. **Azure AI Services** - Multi-service cognitive services resource
+
+## Security Best Practices
+
+This template implements several security best practices:
+
+- **DefaultAzureCredential** - The templates assume you are using Azure CLI or PowerShell authentication
+- **Secrets in Key Vault** - All access keys and connection strings are stored in Key Vault
+- **System-Assigned Managed Identity** - Used for AI Services to securely access the Storage Account
+- **Role-Based Access Control (RBAC)** - Proper access roles are assigned between resources
+- **Secure Network Configuration** - Network rules can be customized for production environments
+
+### Future work: Network Security
+Warning! This demo does not include private networking. Deployed endpoints will be available on the public Internet. (In the future we will update the example to use private networking and other best practices.) 
+
+### Production Considerations
+
+For production deployments, consider these additional security practices:
+
+1. Restrict network access using VNet integration and private endpoints
+2. Implement more restrictive RBAC roles with least privilege
+3. Use CI/CD pipelines with service principals instead of user credentials
+4. Implement resource locks to prevent accidental deletion
+5. Add resource tagging for better governance
+
+## Prerequisites
+
+- Azure CLI (2.71.0 or later)
+- Bicep CLI (version 0.34.44 or newer)
+- An active Azure subscription
+- Logged in to Azure with sufficient permissions to create resources
+
+## Deployment Instructions
+
+1. Clone this repository
+2. Navigate to the directory containing the Bicep files
+3. Make the deployment script executable: `chmod +x deploy.sh`
+4. Run the deployment script: `./deploy.sh`
+
+## Local Development Configuration
+
+For local development:
+
+1. The deployment automatically gets your current user's Object ID for Key Vault access
+2. After deployment, your application can use `DefaultAzureCredential` to access the Key Vault
+3. Retrieve secrets from Key Vault using the Output values from the deployment
+
+## Example Application
+
+A simple sentiment analysis example is included to demonstrate credential retrieval and AI service usage:
+
+### Prerequisites for Example App
+1. Install required dependencies:
+   ```
+   pip install -r requirements.txt
+   ```
+
+2. Run the example application:
+   ```
+   python azure_ai_sentiment_analysis.py
+   ```
+
+This example demonstrates:
+- Retrieving credentials from Key Vault
+- Calling Azure AI service endpoint for sentiment analysis
+
+
+## Resource Cleanup
+
+Once testing is complete, remove all deployed resources by running:
+```
+./cleanup.sh
+```
+
+## Module Structure
+
+- `main.bicep` - Main template that orchestrates the deployment
+- `modules/` - Contains modular templates for each resource type:
+  - `resource-group.bicep` - Resource group deployment
+  - `key-vault.bicep` - Key Vault with access policies
+  - `storage-account.bicep` - Storage Account with blob container
+  - `ai-services.bicep` - Azure AI Services with Managed Identity
+
+## Parameters
+
+Configure your deployment by modifying `main.parameters.json`:
+
+- `location` - Azure region for resources
+- `baseName` - Prefix for resource naming
+- `environmentName` - Environment name (dev, test, prod)
+- `currentUserObjectId` - Gets populated automatically by the deployment script
+
+
+
+## Troubleshooting
+
+If the deployment fails, check:
+
+1. That you have sufficient permissions in your Azure subscription
+2. That the location supports all resource types
+3. That resource names are globally unique where required
+4. Azure activity logs for detailed error information
+
+### Known issue
+
+In the current version of this example, there is no suffix to ensure naming uniqueness AND soft delete is enabled. If you wish to deploy, remove, and re-deploy this example in the same subscription, it will be necessary to manually purge the soft deleted resources before re-deployment.
