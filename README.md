@@ -1,5 +1,3 @@
-# README
-
 # Azure AI-102 Certification Course Review
 
 As expected, this was a general knowledge survey course that focused more on administration than engineering skill building. However, I found their training exercises valuable for introducing me to various endpoints and capabilities with potential enterprise applications, such as:
