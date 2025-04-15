@@ -19,7 +19,7 @@ output "resource_group" {
   description = "Resource group details"
 }
 
-# Output Key Vault details (sensitive info masked)
+# Output Key Vault details (intent: do not include secrets in output)
 output "key_vault" {
   value = {
     id   = azurerm_key_vault.kv.id
@@ -30,7 +30,7 @@ output "key_vault" {
   sensitive   = false
 }
 
-# Output Storage Account details (sensitive info masked)
+# Output Storage Account details ((intent: do not include secrets in output))
 output "storage_account" {
   value = {
     id             = azurerm_storage_account.sa.id
@@ -42,7 +42,7 @@ output "storage_account" {
   sensitive   = false
 }
 
-# Output AI Services details
+# Output AI Services details (intent: do not include secrets in output)
 output "ai_services" {
   value = {
     id              = azurerm_cognitive_account.ai_services.id
