@@ -1,75 +1,83 @@
-# Terraform .gitignore
-
-# Local .terraform directories
+# Terraform state files and temporary directories
 **/deployment/terraform/.terraform/*
-deployment/terraform/.terraform/*
-.terraform/*
-
-# .tfstate files
 **/deployment/terraform/*.tfstate
 **/deployment/terraform/*.tfstate.*
-deployment/terraform/*.tfstate
-deployment/terraform/*.tfstate.*
+.terraform/*
 *.tfstate
 *.tfstate.*
 
 # Crash log files
 **/deployment/terraform/crash.log
 **/deployment/terraform/crash.*.log
-deployment/terraform/crash.log
-deployment/terraform/crash.*.log
 crash.log
 crash.*.log
 
-# Exclude all .tfvars files, which might contain sensitive data
+# Exclude sensitive variable files
 **/deployment/terraform/*.tfvars
 **/deployment/terraform/*.tfvars.json
-deployment/terraform/*.tfvars
-deployment/terraform/*.tfvars.json
 *.tfvars
 *.tfvars.json
+!*.example.tfvars
 
 # Ignore CLI configuration files
 **/deployment/terraform/.terraformrc
 **/deployment/terraform/terraform.rc
-deployment/terraform/.terraformrc
-deployment/terraform/terraform.rc
 .terraformrc
 terraform.rc
 
-# Ignore override files as they usually contain environment-specific values
+# Ignore override files
 **/deployment/terraform/override.tf
 **/deployment/terraform/override.tf.json
 **/deployment/terraform/*_override.tf
 **/deployment/terraform/*_override.tf.json
-deployment/terraform/override.tf
-deployment/terraform/override.tf.json
-deployment/terraform/*_override.tf
-deployment/terraform/*_override.tf.json
 override.tf
 override.tf.json
 *_override.tf
 *_override.tf.json
 
-# Ignore lock files
+# Terraform lock files
 **/deployment/terraform/.terraform.lock.hcl
-deployment/terraform/.terraform.lock.hcl
 .terraform.lock.hcl
 
-# Ignore backup files
+# Backup and temporary files
 **/deployment/terraform/*.bak
-deployment/terraform/*.bak
 *.bak
+*.swp
+*~
 
-# Ignore plan output files
+# Deployment and output files
 **/deployment/terraform/tfplan
 **/deployment/terraform/*.tfplan
-deployment/terraform/tfplan
-deployment/terraform/*.tfplan
 tfplan
 *.tfplan
-
-# Ignore local deployment output files
-**/deployment/terraform/deployment-outputs.json
-deployment/terraform/deployment-outputs.json
 deployment-outputs.json
+deployment_config.json
+
+# Python-specific ignores
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+env/
+venv/
+.venv/
+
+# Secrets and sensitive files
+*.pem
+*.key
+*.crt
+*.pfx
+*.env
+.env
+secrets.json
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS-specific files
+.DS_Store
+Thumbs.db
