@@ -1,0 +1,75 @@
+# Terraform .gitignore
+
+# Local .terraform directories
+**/deployment/terraform/.terraform/*
+deployment/terraform/.terraform/*
+.terraform/*
+
+# .tfstate files
+**/deployment/terraform/*.tfstate
+**/deployment/terraform/*.tfstate.*
+deployment/terraform/*.tfstate
+deployment/terraform/*.tfstate.*
+*.tfstate
+*.tfstate.*
+
+# Crash log files
+**/deployment/terraform/crash.log
+**/deployment/terraform/crash.*.log
+deployment/terraform/crash.log
+deployment/terraform/crash.*.log
+crash.log
+crash.*.log
+
+# Exclude all .tfvars files, which might contain sensitive data
+**/deployment/terraform/*.tfvars
+**/deployment/terraform/*.tfvars.json
+deployment/terraform/*.tfvars
+deployment/terraform/*.tfvars.json
+*.tfvars
+*.tfvars.json
+
+# Ignore CLI configuration files
+**/deployment/terraform/.terraformrc
+**/deployment/terraform/terraform.rc
+deployment/terraform/.terraformrc
+deployment/terraform/terraform.rc
+.terraformrc
+terraform.rc
+
+# Ignore override files as they usually contain environment-specific values
+**/deployment/terraform/override.tf
+**/deployment/terraform/override.tf.json
+**/deployment/terraform/*_override.tf
+**/deployment/terraform/*_override.tf.json
+deployment/terraform/override.tf
+deployment/terraform/override.tf.json
+deployment/terraform/*_override.tf
+deployment/terraform/*_override.tf.json
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Ignore lock files
+**/deployment/terraform/.terraform.lock.hcl
+deployment/terraform/.terraform.lock.hcl
+.terraform.lock.hcl
+
+# Ignore backup files
+**/deployment/terraform/*.bak
+deployment/terraform/*.bak
+*.bak
+
+# Ignore plan output files
+**/deployment/terraform/tfplan
+**/deployment/terraform/*.tfplan
+deployment/terraform/tfplan
+deployment/terraform/*.tfplan
+tfplan
+*.tfplan
+
+# Ignore local deployment output files
+**/deployment/terraform/deployment-outputs.json
+deployment/terraform/deployment-outputs.json
+deployment-outputs.json

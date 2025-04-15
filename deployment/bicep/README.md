@@ -29,7 +29,7 @@ Warning! This demo does not include private networking. Deployed endpoints will 
 For production deployments, consider these additional security practices:
 
 1. Restrict network access using VNet integration and private endpoints
-2. Implement more restrictive RBAC roles with least privilege
+2. Implement more restrictive RBAC roles with least privilege. For example currently the developer has admin access to the Ket Vault. In production the app should use a service account that has only has read privileges to the secrets it needs to operate. 
 3. Use CI/CD pipelines with service principals instead of user credentials
 4. Implement resource locks to prevent accidental deletion
 5. Add resource tagging for better governance
