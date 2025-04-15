@@ -29,3 +29,4 @@ As expected, this was a general knowledge survey course that focused more on adm
 
 # Examples of improvements that could be incorporated into the course 
 - [Secrets Handling](./secrets_handling/README.md)
+- [Infrastructure as Code](./deployment/README.md)

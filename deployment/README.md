@@ -36,11 +36,11 @@ To demonstrate the benefits of infrastructure as code, I created two comprehensi
 ### Deployment Approaches
 
 - **Bicep** (Microsoft's native template language)
-  - Location: `/bicep/README.md`
+  - [Example Bicep Deployment](./bicep/README.md)
   - [Microsoft Bicep Documentation](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/)
 
 - **Terraform** (Platform-agnostic infrastructure deployment)
-  - Location: `/terraform/README.md`
+  - [Example Terraform Deployment](./terraform/README.md)
   - [Terraform Documentation](https://developer.hashicorp.com/terraform/)
 
 ## Terraform vs Bicep
