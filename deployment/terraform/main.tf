@@ -116,15 +116,15 @@ resource "azurerm_key_vault_access_policy" "user" {
   object_id    = data.azurerm_client_config.current.object_id
 
   key_permissions = [
-    "Get", "List", "Create", "Delete", "Update"
+    "Get", "List", "Create", "Delete", "Update", "Recover", "Purge"
   ]
 
   secret_permissions = [
-    "Get", "List", "Set", "Delete", "Backup", "Restore"
+    "Get", "List", "Set", "Delete", "Backup", "Restore", "Recover", "Purge"
   ]
 
   certificate_permissions = [
-    "Get", "List", "Create", "Delete", "Update"
+    "Get", "List", "Create", "Delete", "Update", "Recover", "Purge"
   ]
 }
 
